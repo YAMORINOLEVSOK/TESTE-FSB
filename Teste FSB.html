@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Participação - Masterclass FSB</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1e3a8a 50%, #8b2fb3 100%);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #4169e1 0%, #da70d6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-container {
+            background-color: rgba(30, 30, 60, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e2e2ff;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: rgba(20, 20, 40, 0.6);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #8b2fb3;
+            box-shadow: 0 0 0 2px rgba(139, 47, 179, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(90deg, #4169e1 0%, #8b2fb3 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background: linear-gradient(90deg, #3a5cd0 0%, #7928a1 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .success-message {
+            background-color: rgba(30, 215, 96, 0.2);
+            color: #1ed760;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            border: 1px solid rgba(30, 215, 96, 0.4);
+        }
+        
+        .certificate-container {
+            display: none;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            background-color: rgba(30, 30, 60, 0.8);
+            position: relative;
+            border-radius: 16px;
+            backdrop-filter: blur(8px);
+        }
+        
+        .certificate {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1e3a8a 50%, #8b2fb3 100%);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .certificate-content {
+            padding: 120px 80px;
+        }
+        
+        .certificate-name {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4169e1 0%, #da70d6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        
+        .certificate-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #e2e2ff;
+        }
+        
+        .certificate-date {
+            font-size: 16px;
+            margin-top: 50px;
+            color: #e2e2ff;
+        }
+        
+        .logo {
+            max-width: 180px;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        
+        .signature {
+            margin-top: 40px;
+            font-style: italic;
+            color: #e2e2ff;
+        }
+        
+        .error-message {
+            color: #ff4d6a;
+            background-color: rgba(255, 77, 106, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid rgba(255, 77, 106, 0.4);
+        }
+        
+        .masterclass-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .masterclass-title {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.1;
+        }
+        
+        .masterclass-title span {
+            background: linear-gradient(90deg, #4169e1 0%, #da70d6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .masterclass-subtitle {
+            color: #e2e2ff;
+            font-size: 1.4rem;
+            margin-top: 5px;
+        }
+        
+        .masterclass-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .masterclass-theme {
+            margin-top: 10px;
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+        
+        .astronaut-icon {
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            opacity: 0.3;
+            width: 200px;
+            z-index: -1;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .form-container {
+                padding: 20px 15px;
+            }
+            
+            .certificate-content {
+                padding: 60px 40px;
+            }
+            
+            .astronaut-icon {
+                width: 120px;
+                right: -20px;
+                top: -20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="astronaut-icon">
+        <img src="/api/placeholder/200/200" alt="Astronauta">
+    </div>
+    <header>
+        <div class="masterclass-header">
+            <div>
+                <h1><span>master</span>class.</h1>
+                <p class="masterclass-subtitle">Certificado de Participação</p>
+                <div class="masterclass-info">17 de abril • 10h às 12h</div>
+                <div class="masterclass-theme">IA Generativa</div>
+            </div>
+            <!-- Logo FSB/ialab - único logo no cabeçalho -->
+            <img src="/api/placeholder/150/80" alt="FSB/ialab" class="logo">
+        </div>
+    </header>
+    
+    <div class="form-container">
+        <form id="certificateForm">
+            <div class="form-group">
+                <label for="name">Nome Completo *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">E-mail Corporativo (opcional)</label>
+                <input type="email" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="question">De que forma você imagina que pode aplicar a IA no seu dia-a-dia na FSB? *</label>
+                <textarea id="question" name="question" rows="5" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;" required></textarea>
+                <div id="error-message" class="error-message">Por favor, preencha este campo para receber seu certificado.</div>
+            </div>
+            
+            <button type="submit" id="submitBtn">Gerar Certificado</button>
+        </form>
+        
+        <div id="success-message" class="success-message">
+            Seu certificado foi gerado com sucesso! O download será iniciado automaticamente.
+        </div>
+    </div>
+    
+    <div id="certificate-container" class="certificate-container">
+        <div id="certificate" class="certificate">
+            <div class="certificate-content">
+                <h2 style="background: linear-gradient(90deg, #4169e1 0%, #da70d6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">CERTIFICADO DE PARTICIPAÇÃO</h2>
+                <p class="certificate-text">Certificamos que</p>
+                <p class="certificate-name" id="certificate-name">Nome do Participante</p>
+                <p class="certificate-text">participou da Masterclass FSB sobre</p>
+                <p class="certificate-text"><strong>IA Generativa: Transforme sua forma de trabalhar</strong></p>
+                <p class="certificate-text">com carga horária de 2 horas.</p>
+                <p class="certificate-date">São Paulo, <span id="current-date"></span></p>
+                <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+                    <div>
+                        <p class="signature">FSB Holding</p>
+                    </div>
+                    <div>
+                        <p class="signature">ialab</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Não precisamos mais verificar resposta correta, apenas se o campo foi preenchido
+            const form = document.getElementById('certificateForm');
+            const successMessage = document.getElementById('success-message');
+            const certificateContainer = document.getElementById('certificate-container');
+            const certificateName = document.getElementById('certificate-name');
+            const currentDate = document.getElementById('current-date');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Formatando a data atual
+            const today = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            currentDate.textContent = today.toLocaleDateString('pt-BR', options);
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const question = document.getElementById('question').value;
+                
+                // Verificar se a resposta foi preenchida
+                if (question.trim() !== '') {
+                    // Atualizando o nome no certificado
+                    certificateName.textContent = name;
+                    
+                    // Exibindo o certificado e a mensagem de sucesso
+                    certificateContainer.style.display = 'block';
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    
+                    // Guardando os dados em um "banco de dados" temporário
+                    // (Na versão real, aqui enviaríamos os dados para uma planilha)
+                    const submissionData = {
+                        name: name,
+                        email: email,
+                        answer: question,
+                        date: new Date().toISOString()
+                    };
+                    
+                    console.log('Dados registrados:', submissionData);
+                    
+                    // Simulando armazenamento (na versão real, isso iria para uma API)
+                    let submissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+                    submissions.push(submissionData);
+                    localStorage.setItem('submissions', JSON.stringify(submissions));
+                    
+                    // Gerando o PDF do certificado
+                    setTimeout(generatePDF, 1000);
+                } else {
+                    // Exibindo mensagem de erro
+                    errorMessage.style.display = 'block';
+                }
+            });
+            
+            function generatePDF() {
+                const { jsPDF } = window.jspdf;
+                
+                html2canvas(document.getElementById('certificate'), {
+                    scale: 2
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('l', 'mm', 'a4');
+                    const width = pdf.internal.pageSize.getWidth();
+                    const height = pdf.internal.pageSize.getHeight();
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+                    pdf.save('Certificado_Masterclass_FSB.pdf');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
