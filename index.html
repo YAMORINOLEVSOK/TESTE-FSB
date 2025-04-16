@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Participação - Masterclass FSB</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7/download.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1e3a8a 50%, #0073CE 100%);
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #4169e1 0%, #da70d6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-container {
+            background-color: rgba(30, 30, 60, 0.8);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e2e2ff;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: rgba(20, 20, 40, 0.6);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #8b2fb3;
+            box-shadow: 0 0 0 2px rgba(139, 47, 179, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(90deg, #4169e1 0%, #8b2fb3 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background: linear-gradient(90deg, #3a5cd0 0%, #7928a1 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .success-message {
+            background-color: rgba(30, 215, 96, 0.2);
+            color: #1ed760;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            border: 1px solid rgba(30, 215, 96, 0.4);
+        }
+        
+        .data-note {
+            font-size: 12px;
+            margin-top: 5px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #ffffff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #ff4d6a;
+            background-color: rgba(255, 77, 106, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid rgba(255, 77, 106, 0.4);
+        }
+        
+        .masterclass-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .left-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .title-section {
+            margin-right: 20px;
+        }
+        
+        .astronaut-icon {
+            width: 240px;
+            height: auto;
+            margin-right: 30px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-fsb {
+            max-width: 150px;
+            height: auto;
+        }
+        
+        .logo-templo {
+            max-width: 120px;
+            height: auto;
+        }
+        
+        .masterclass-title {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.1;
+        }
+        
+        .masterclass-title span {
+            background: linear-gradient(90deg, #4169e1 0%, #da70d6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .masterclass-subtitle {
+            color: #e2e2ff;
+            font-size: 1.4rem;
+            margin-top: 5px;
+        }
+        
+        .masterclass-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .masterclass-theme {
+            margin-top: 10px;
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .form-container {
+                padding: 20px 15px;
+            }
+            
+            .masterclass-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .left-section {
+                flex-direction: row;
+                align-items: center;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+            
+            .astronaut-icon {
+                width: 100px;
+                margin-top: 0;
+                margin-left: 0;
+                margin-right: 0;
+                order: -1; /* Coloca o astronauta antes do título */
+            }
+            
+            .title-section {
+                margin-left: 15px;
+                margin-right: 0;
+            }
+            
+            .logo-container {
+                flex-direction: row;
+                gap: 15px;
+                justify-content: flex-end;
+                width: 100%;
+            }
+            
+            .logo-templo, .logo-fsb {
+                max-width: 80px;
+            }
+            
+            textarea {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="masterclass-header">
+            <div class="left-section">
+                <div class="title-section">
+                    <h1><span>master</span>class.</h1>
+                    <p class="masterclass-subtitle">Certificado de Participação</p>
+                    <div class="masterclass-info">17 de abril • 10h às 12h</div>
+                    <div class="masterclass-theme">IA Generativa</div>
+                </div>
+                <img src="astronauta.png" alt="Astronauta" class="astronaut-icon">
+            </div>
+            <div class="logo-container">
+                <img src="logo-templo.png" alt="TEMPLO" class="logo-templo">
+                <img src="fsb-logo-branco.png" alt="FSB" class="logo-fsb">
+            </div>
+        </div>
+    </header>
+    
+    <div class="form-container">
+        <form id="certificateForm">
+            <div class="form-group">
+                <label for="name">Nome Completo *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">E-mail Corporativo</label>
+                <input type="email" id="email" name="email" required>
+                <div class="data-note">Seu e-mail não será utilizado para marketing.</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="question">De que forma você imagina que pode aplicar a IA no seu dia-a-dia na FSB? *</label>
+                <textarea id="question" name="question" rows="5" required></textarea>
+                <div id="error-message" class="error-message">Por favor, preencha este campo para receber seu certificado.</div>
+            </div>
+            
+            <button type="submit" id="submitBtn">Gerar Certificado</button>
+        </form>
+        
+        <div id="success-message" class="success-message">
+            Seu certificado foi gerado com sucesso! O download será iniciado automaticamente.
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Gerando seu certificado...</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('certificateForm');
+            const successMessage = document.getElementById('success-message');
+            const loadingElement = document.getElementById('loading');
+            const errorMessage = document.getElementById('error-message');
+            
+            // URL do PDF base
+            const pdfUrl = 'certificado-modelo.pdf';
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const question = document.getElementById('question').value;
+                
+                // Verificar se a resposta foi preenchida
+                if (question.trim() !== '') {
+                    // Mostrar indicador de carregamento
+                    loadingElement.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                    
+                    try {
+                        // Gerar o PDF modificado
+                        await modifyPdf(name);
+                        
+                        // Mostrar mensagem de sucesso
+                        loadingElement.style.display = 'none';
+                        successMessage.style.display = 'block';
+                    } catch (error) {
+                        console.error('Erro ao gerar o certificado:', error);
+                        loadingElement.style.display = 'none';
+                        errorMessage.textContent = 'Ocorreu um erro ao gerar o certificado. Por favor, tente novamente.';
+                        errorMessage.style.display = 'block';
+                    }
+                } else {
+                    // Exibindo mensagem de erro
+                    errorMessage.style.display = 'block';
+                }
+            });
+            
+            async function modifyPdf(name) {
+                // Carregando as bibliotecas PDF-lib e fontkit
+                const { PDFDocument, StandardFonts, rgb } = PDFLib;
+                
+                try {
+                    // Enviar dados para o Google Sheets com retry
+                    const formData = {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        answer: document.getElementById('question').value
+                    };
+                    
+                    // URL do seu script do Google Apps
+                    const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbzjUj8FbP3MKWgCtIRpo29PTfwO1q4NDrF8LeCVNpqV51WFFXCRlOPweQXUzM6C3Itk/exec';
+                    
+                    // Função para tentar enviar dados para o Google Sheets com retry
+                    sendToGoogleSheets(googleScriptUrl, formData);
+                    
+                    // Buscar o PDF modelo
+                    const existingPdfBytes = await fetch('certificado-modelo.pdf').then(res => res.arrayBuffer());
+                    
+                    // Carregar o PDF
+                    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+                    
+                    // Registrar o fontkit para poder usar fontes personalizadas
+                    if (window.fontkit) {
+                        pdfDoc.registerFontkit(fontkit);
+                        console.log("Fontkit registrado com sucesso!");
+                    } else {
+                        console.error("Fontkit não está disponível");
+                    }
+                    
+                    // Obter a primeira página
+                    const pages = pdfDoc.getPages();
+                    const firstPage = pages[0];
+                    
+                    // Definir a fonte e tamanho
+                    const fontSize = 46;
+                    let fontToUse;
+                    
+                    // Tentar carregar a fonte personalizada com tratamento de erro explícito
+                    try {
+                        console.log("Tentando carregar a fonte personalizada...");
+                        
+                        // Tente carregar de diferentes caminhos
+                        let fontPath;
+                        try {
+                            // Primeiro tenta o caminho raiz com nome sem espaços
+                            fontPath = 'fonts/Moret-Bold.otf';
+                            const response = await fetch(fontPath);
+                            if (!response.ok) throw new Error(`Erro ${response.status}`);
+                        } catch (e) {
+                            // Se falhar, tenta o caminho com a estrutura de diretórios
+                            fontPath = 'fonts/Moret/Moret Bold.otf';
+                            const response = await fetch(fontPath);
+                            if (!response.ok) throw new Error(`Erro ${response.status}`);
+                        }
+                        
+                        const fontBytes = await fetch(fontPath).then(res => res.arrayBuffer());
+                        fontToUse = await pdfDoc.embedFont(fontBytes);
+                        console.log("Fonte carregada com sucesso!");
+                    } catch (fontError) {
+                        console.error("Erro ao carregar a fonte personalizada:", fontError);
+                        
+                        // Use a fonte padrão como fallback
+                        console.log("Usando fonte padrão como fallback");
+                        fontToUse = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                    }
+                    
+                    // Obter dimensões da página para ajuste fino
+                    const { width, height } = firstPage.getSize();
+                    
+                    // Coordenadas para o nome - ajustadas conforme feedback
+                    const textX = 400; // Ajustado para 400 pixels
+                    const textY = height - 360; // Ajustado para height - 360
+                    
+                    // Adicionar o nome ao PDF com a fonte que conseguimos carregar
+                    firstPage.drawText(name, {
+                        x: textX,
+                        y: textY,
+                        size: fontSize,
+                        font: fontToUse,
+                        color: rgb(254/255, 211/255, 152/255), // Amarelo #fed398
+                    });
+                    
+                    // Salvar o PDF modificado
+                    const pdfBytes = await pdfDoc.save();
+                    
+                    // Fazer o download do PDF
+                    download(pdfBytes, `Certificado_${name.replace(/\s+/g, '_')}.pdf`, 'application/pdf');
+                    
+                } catch (error) {
+                    console.error('Erro ao processar PDF:', error);
+                    throw error; // Propagar o erro para tratamento adequado
+                }
+            }
+            
+            // Função para enviar dados para o Google Sheets com retry e jitter
+            async function sendToGoogleSheets(url, data, retries = 3) {
+                // Adiciona um atraso aleatório (jitter) entre 1-3 segundos
+                // Isso ajuda a distribuir as requisições no tempo em caso de muitos acessos simultâneos
+                const jitter = Math.floor(Math.random() * 2000) + 1000; // 1-3 segundos
+                await new Promise(resolve => setTimeout(resolve, jitter));
+                
+                // Tenta enviar os dados
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        mode: 'no-cors', // Importante para evitar problemas de CORS
+                        cache: 'no-cache',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    console.log('Tentativa de envio de dados realizada');
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao enviar dados para o Google Sheets:', error);
+                    
+                    // Se ainda temos tentativas, espera um pouco e tenta novamente
+                    if (retries > 0) {
+                        const backoffDelay = Math.floor(Math.random() * 3000) + 2000; // 2-5 segundos
+                        console.log(`Tentando novamente em ${backoffDelay/1000} segundos...`);
+                        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+                        return sendToGoogleSheets(url, data, retries - 1);
+                    } else {
+                        console.error('Número máximo de tentativas excedido. Os dados podem não ter sido salvos.');
+                        // Retornamos true mesmo assim para não afetar a experiência do usuário
+                        // O certificado ainda será gerado
+                        return false;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
